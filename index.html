@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق إدارة البيانات</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📊 تطبيق إدارة البيانات</h1>
+            <p>إدارة معلومات العملاء والموظفين</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="customers">👥 العملاء</button>
+            <button class="tab-btn" data-tab="employees">👔 الموظفين</button>
+        </nav>
+
+        <!-- Customers Tab -->
+        <section id="customers" class="tab-content active">
+            <div class="tab-header">
+                <h2>إدارة العملاء</h2>
+                <button class="btn btn-primary" onclick="toggleForm('customerForm')">+ إضافة عميل جديد</button>
+            </div>
+
+            <!-- Add Customer Form -->
+            <form id="customerForm" class="form hidden">
+                <h3>نموذج إضافة عميل جديد</h3>
+                <div class="form-group">
+                    <label for="customerName">الاسم *</label>
+                    <input type="text" id="customerName" placeholder="أدخل اسم العميل" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerEmail">البريد الإلكتروني *</label>
+                    <input type="email" id="customerEmail" placeholder="أدخل البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">رقم الهاتف *</label>
+                    <input type="tel" id="customerPhone" placeholder="أدخل رقم الهاتف" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">العنوان *</label>
+                    <input type="text" id="customerAddress" placeholder="أدخل العنوان" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-success" onclick="addCustomer()">حفظ</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleForm('customerForm')">إلغاء</button>
+                </div>
+            </form>
+
+            <!-- Search and Filter -->
+            <div class="search-bar">
+                <input type="text" id="customerSearch" placeholder="🔍 ابحث عن عميل...">
+                <button class="btn btn-info" onclick="exportToCSV('customers')">📥 تصدير CSV</button>
+            </div>
+
+            <!-- Customers Table -->
+            <div class="table-wrapper">
+                <table id="customersTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>رقم الهاتف</th>
+                            <th>العنوان</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersBody">
+                        <tr class="empty-row">
+                            <td colspan="6">لا توجد بيانات عملاء</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Employees Tab -->
+        <section id="employees" class="tab-content">
+            <div class="tab-header">
+                <h2>إدارة الموظفين</h2>
+                <button class="btn btn-primary" onclick="toggleForm('employeeForm')">+ إضافة موظف جديد</button>
+            </div>
+
+            <!-- Add Employee Form -->
+            <form id="employeeForm" class="form hidden">
+                <h3>نموذج إضافة موظف جديد</h3>
+                <div class="form-group">
+                    <label for="employeeName">الاسم *</label>
+                    <input type="text" id="employeeName" placeholder="أدخل اسم الموظف" required>
+                </div>
+                <div class="form-group">
+                    <label for="employeeEmail">البريد الإلكتروني *</label>
+                    <input type="email" id="employeeEmail" placeholder="أدخل البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <label for="employeePosition">الموضع الوظيفي *</label>
+                    <input type="text" id="employeePosition" placeholder="أدخل الموضع الوظيفي" required>
+                </div>
+                <div class="form-group">
+                    <label for="employeeSalary">الراتب *</label>
+                    <input type="number" id="employeeSalary" placeholder="أدخل الراتب" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-success" onclick="addEmployee()">حفظ</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleForm('employeeForm')">إلغاء</button>
+                </div>
+            </form>
+
+            <!-- Search and Filter -->
+            <div class="search-bar">
+                <input type="text" id="employeeSearch" placeholder="🔍 ابحث عن موظف...">
+                <button class="btn btn-info" onclick="exportToCSV('employees')">📥 تصدير CSV</button>
+            </div>
+
+            <!-- Employees Table -->
+            <div class="table-wrapper">
+                <table id="employeesTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>الموضع الوظيفي</th>
+                            <th>الراتب</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeesBody">
+                        <tr class="empty-row">
+                            <td colspan="6">لا توجد بيانات موظفين</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">تعديل البيانات</h2>
+            <form id="editForm" class="form">
+                <div id="editFields"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-success" onclick="saveEdit()">حفظ التعديلات</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
