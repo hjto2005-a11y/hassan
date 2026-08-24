@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة مراقبة الطقس</title>
+    <link rel="stylesheet" href="weather.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🌦️ لوحة مراقبة الطقس</h1>
+            <p>تابع حالة الطقس في أي مكان</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <button class="nav-btn active" onclick="navigateTo('weather')">🌦️ الطقس الحالي</button>
+            <button class="nav-btn" onclick="navigateTo('forecast')">📅 التوقعات</button>
+            <button class="nav-btn" onclick="navigateTo('data-entry')">📊 إدارة البيانات</button>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 الوضع المظلم</button>
+        </nav>
+
+        <!-- Weather Section -->
+        <section id="weather" class="tab-content active">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" id="cityInput" placeholder="🔍 ابحث عن مدينة...">
+                <button class="btn btn-primary" onclick="searchCity()">ابحث</button>
+                <button class="btn btn-secondary" onclick="getCurrentLocation()">📍 موقعي</button>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner hidden">
+                <div class="spinner"></div>
+                <p>جاري تحميل البيانات...</p>
+            </div>
+
+            <!-- Current Weather -->
+            <div id="currentWeather" class="weather-card hidden">
+                <div class="weather-header">
+                    <h2 id="cityName"></h2>
+                    <p id="temperature"></p>
+                </div>
+                <div class="weather-details">
+                    <div class="detail">
+                        <span>🌡️ درجة الحرارة</span>
+                        <p id="temp"></p>
+                    </div>
+                    <div class="detail">
+                        <span>💨 سرعة الرياح</span>
+                        <p id="windSpeed"></p>
+                    </div>
+                    <div class="detail">
+                        <span>💧 الرطوبة</span>
+                        <p id="humidity"></p>
+                    </div>
+                    <div class="detail">
+                        <span>🌬️ الضغط</span>
+                        <p id="pressure"></p>
+                    </div>
+                </div>
+                <div class="weather-description">
+                    <img id="weatherIcon" src="" alt="Weather Icon" style="width: 100px; height: 100px;">
+                    <p id="description"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forecast Section -->
+        <section id="forecast" class="tab-content">
+            <h2>📅 توقعات الطقس لـ 5 أيام</h2>
+            <div id="forecastContainer" class="forecast-container">
+                <p class="text-center">ابحث عن مدينة أولاً لعرض التوقعات</p>
+            </div>
+        </section>
+
+        <!-- Data Entry Section -->
+        <section id="data-entry" class="tab-content">
+            <div class="tab-header">
+                <h2>إدارة البيانات</h2>
+                <button class="btn btn-primary" onclick="toggleForm('weatherForm')">+ إضافة ملاحظة طقس</button>
+            </div>
+
+            <!-- Add Weather Note Form -->
+            <form id="weatherForm" class="form hidden">
+                <h3>نموذج إضافة ملاحظة طقس</h3>
+                <div class="form-group">
+                    <label for="notCity">المدينة *</label>
+                    <input type="text" id="notCity" placeholder="أدخل اسم المدينة" required>
+                </div>
+                <div class="form-group">
+                    <label for="notTemp">درجة الحرارة *</label>
+                    <input type="number" id="notTemp" placeholder="أدخل درجة الحرارة" required>
+                </div>
+                <div class="form-group">
+                    <label for="notCondition">حالة الطقس *</label>
+                    <select id="notCondition" required>
+                        <option value="">-- اختر --</option>
+                        <option value="مشمس">☀️ مشمس</option>
+                        <option value="غائم">☁️ غائم</option>
+                        <option value="ممطر">🌧️ ممطر</option>
+                        <option value="ثلجي">❄️ ثلجي</option>
+                        <option value="عاصفة">⛈️ عاصفة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notDate">التاريخ *</label>
+                    <input type="date" id="notDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="notNotes">ملاحظات</label>
+                    <textarea id="notNotes" placeholder="أضف أي ملاحظات إضافية"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-success" onclick="addWeatherNote()">حفظ</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleForm('weatherForm')">إلغاء</button>
+                </div>
+            </form>
+
+            <!-- Search and Filter -->
+            <div class="search-bar">
+                <input type="text" id="noteSearch" placeholder="🔍 ابحث عن ملاحظة...">
+                <button class="btn btn-info" onclick="exportNotesToCSV()">📥 تصدير CSV</button>
+            </div>
+
+            <!-- Weather Notes Table -->
+            <div class="table-wrapper">
+                <table id="notesTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>المدينة</th>
+                            <th>درجة الحرارة</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                            <th>الملاحظات</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notesBody">
+                        <tr class="empty-row">
+                            <td colspan="7">لا توجد ملاحظات</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">تعديل الملاحظة</h2>
+            <form id="editForm" class="form">
+                <div id="editFields"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-success" onclick="saveWeatherEdit()">حفظ التعديلات</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="weather.js"></script>
+</body>
+</html>
